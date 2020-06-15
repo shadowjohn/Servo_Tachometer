@@ -57,6 +57,11 @@ void fireIsr()
 }
 int rpmToServoAngle()
 {
+  if(rpm>15000)
+  {
+    //防亂七八糟的值
+    return -1;
+  }
   //將 rpm 轉成 servo 要用的角度
   // 14000/180 = 77.778
   int angle = 0;
@@ -70,9 +75,10 @@ int rpmToServoAngle()
     // 0 ~  1000 -> 180~177度
     //∵ FZR 的 2000rpm 以內非線性距離，1000rpm 大概只佔 1/3
     //∴ 1000rpm 約等於 177度，1500rpm 約等於 171度
+    // (14000-2000)/ x = 165 , x = 73.099
     // (14000-1500)/ x = 171 , x = 73.099
     // (14000-1000)/ x = 177 , x = 73.45
-    r = 73.099;
+    r = 76; 
   }
   else if( rpm >=1000 && rpm < 1500)
   {
@@ -97,12 +103,13 @@ void gotoS(int angle)
   //當 servo 要轉動，要從最後 servo 的位置，慢慢走到新的角度，才不會造成 servo 跳動、損壞
   //如此旋轉，移動，看起來才會 smooth 順暢
   //delay 的時間不可低於 6ms，以免 servo 燒掉
+  if(angle<0) return;
   if(lastAngle>=angle)
   {
     for(int i= lastAngle;i>=angle;i--)
     {
       servo.write(i);           
-      delay(10);
+      delay(8);
     }
   }
   else
@@ -110,7 +117,7 @@ void gotoS(int angle)
     for(int i= lastAngle;i<angle;i+=1)
     {
       servo.write(i);           
-      delay(10);
+      delay(8);
     }
   }
   lastAngle = angle;
@@ -121,17 +128,17 @@ void loop() {
   
   if(isTested==0)
   {
-    for(int run_times = 0; run_times<1;run_times++) // 玩二次
+    for(int run_times = 0; run_times<2;run_times++) // 玩二次
     {
       for(int angle = 180-1; angle >= 0; angle--)
       {
         servo.write(angle);
-        delay(10);
+        delay(8);
       }      
       for(int angle = 0; angle <=180; angle++)
       {
         servo.write(angle);
-        delay(10);
+        delay(8);
       }
     }
     isTested=1;
