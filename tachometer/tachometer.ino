@@ -16,12 +16,13 @@ unsigned long lastPT = 0;
 unsigned long rpm = 0;
 
 unsigned long st = 0;
-int isTested = 0;
-unsigned int lastAngle = 0;
+int isTested = 0; // 開機的測試模式，跑過一次後，數值變成 1 ，下次再 loop 就不會跑了
+unsigned int lastAngle = 0; //紀錄最後 servo 的角度
 unsigned long Gnow = 0;
 //取得的rpm不停的寫入 clean_rpms，0~9 陣列，排序後，取中間，減少判差
+//可以用來作最後10次rpm變化量，作延遲觸發事件
 int clean_rpms[] = { 0,0,0,0,0,0,0,0,0,0 };
-int rpm_step = 0;
+int rpm_step = 0; //上面陣列儲存的 index，循序寫入，最後 % 陣列長度後回到 index 0
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);  
@@ -39,6 +40,7 @@ void setup() {
 }
 void fireIsr()
 {
+  //取得轉速訊號的方法，這個寫法才能正常拿到 12000rpm 的以上的值
   unsigned long now = micros();
   unsigned long duringInt = now - lastPT;
   if (duringInt > 1000) //5000
@@ -55,9 +57,8 @@ void fireIsr()
 }
 int rpmToServoAngle()
 {
+  //將 rpm 轉成 servo 要用的角度
   // 14000/180 = 77.778
-  // 14000/270 = 51.851852
-  // 14000/(270-100) = 82.353
   int angle = 0;
   // 如果在 2000 rpm 以內
   // 角度要另外計算
@@ -92,6 +93,10 @@ int rpmToServoAngle()
 }
 void gotoS(int angle)
 {
+  //lastAngle : servo 最後的角度
+  //當 servo 要轉動，要從最後 servo 的位置，慢慢走到新的角度，才不會造成 servo 跳動、損壞
+  //如此旋轉，移動，看起來才會 smooth 順暢
+  //delay 的時間不可低於 6ms，以免 servo 燒掉
   if(lastAngle>=angle)
   {
     for(int i= lastAngle;i>=angle;i--)
@@ -138,11 +143,9 @@ void loop() {
   Gnow = millis() - st;
   if( Gnow >= 1000)
   {
-    //Serial.print("Gnow: ");
-    //Serial.print(Gnow);
-    
-    int angle = rpmToServoAngle();
-    gotoS(angle);    
+    //利用 arduino 執行時間，微調，避免馬達過度通電損壞  
+    int angle = rpmToServoAngle(); //取得新角度
+    gotoS(angle); //馬達走到新角度    
     Serial.print(" , Angle: ");
     Serial.print(angle);
     Serial.print(" , Rpm: ");   
@@ -150,13 +153,15 @@ void loop() {
     Serial.println();
     st = Gnow;   
   }
+
+  //當轉速訊號消失一段時間後，轉速表也要歸零
   if (micros()-lastPT > 300000) 
   { 
     //Serial.println("超過N秒沒變動,rpm 刷 0");
-    rpm=0;
+    rpm = 0;
     for(int i=0;i<10;i++)
     {
-      clean_rpms[i]=0;   
+      clean_rpms[i] = 0; //陣列也要清 0 
     }
   }  
   //超轉燈，呼吸燈
@@ -169,11 +174,11 @@ void loop() {
     int rpm_val = map(rpm, 8000, 12000, 128, 255);
     analogWrite (overRPMLedPin, rpm_val);
   }
-  else if( rpm >= 12000)
+  else if( rpm >= 12000) //超過12000轉就整顆全亮
   {
     analogWrite (overRPMLedPin,255);
   }
-  else
+  else //低於 8000 以下，暗
   {
     analogWrite (overRPMLedPin,0);
   }
