@@ -30,11 +30,10 @@ FZR150 自製轉速表 - Part1：https://3wa.tw/blog/blog.php?id=1856<br>
 <ul>
 <li>1、抓取引擎訊號的二種解法： https://kokoraskostas.blogspot.com/2013/12/arduino-inductive-spark-plug-sensor.html<br>
   為了解決 12000rpm 以上的轉速抓取，作了一些語法的改良</li>
-<li>2、PC817 (光偶合器) 的使用方法：<br>
-  機器人零件指南 / Ohmsha編著; 沈鄉吟譯 <br>
-  也可以使用 TLP621、TLP 421<br>
+<li>2、PC817 (光偶合器，如：TLP 621、TLP 421) 的使用方法：<br>
+  機器人零件指南 / Ohmsha編著; 沈鄉吟譯<br>  
   http://wyj-learning.blogspot.com/2017/10/arduino-04pc817.html<br>
-  或參考 小老婆機車資訊網，尋找 killPeople 大大分享的 8051 轉速表的文章<br>
+  小老婆機車資訊網，尋找 killPeople 大大分享的 8051 轉速表的文章<br>
   </li>
 <li>3、呼吸燈：<br>
   http://web.htjh.tp.edu.tw/B4/106iot/NodeMCU%E4%BD%BF%E7%94%A8%E4%BB%8B%E7%B4%B9.pdf<br>
