@@ -20,6 +20,9 @@
 <h3>電路圖：</h3>
 <img src="screenshot/Servo_Tachometer.png">
 <br>
+<h3>實作照片：</h3>
+<img src="screenshot/Example.jpg">
+<br>
 <h3>參考影片：</h3>
 <a href="screenshot/video/1.mp4">影片 1</a><br>
 <a href="screenshot/video/2.mp4">影片 2</a><br>
