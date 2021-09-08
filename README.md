@@ -28,6 +28,11 @@
 <a href="screenshot/video/2.mp4">影片 2</a><br>
 <a href="screenshot/video/3.mp4">影片 3</a><br>
 FZR150 自製轉速表 - Part1：https://3wa.tw/blog/blog.php?id=1856<br>
+<h3>注意事項：</h3>
+轉速訊號取得與接線方法，建議改成：https://github.com/shadowjohn/RPM_TACHOMETER
+<br>
+有空再更新吧^^"
+<br>
 <br>
 <h3>其他參考資料：</h3>
 <ul>
